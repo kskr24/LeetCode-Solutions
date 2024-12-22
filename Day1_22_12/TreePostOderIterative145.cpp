@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
 
-#include <stack>
-
 using namespace std;
 
 struct TreeNode {
@@ -16,22 +14,26 @@ struct TreeNode {
 
 class Solution {
  public:
-  vector<int> inorderTraversal(TreeNode* root) {
-    vector<int> ans;
+  vector<int> postorderTraversal(TreeNode* root) {
+    vector<int>                       ans;
+    stack<std::pair<TreeNode*, bool>> st;
+    st.push({root, false});
 
-    std::stack<TreeNode*> st;
-    TreeNode*             cur = root;
-    while (cur || !st.empty()) {
-      if (cur) {
-        st.push(cur);
-        cur = cur->left;
-      } else {
-        cur = st.top();
-        st.pop();
+    TreeNode* cur = root;
+
+    while (!st.empty()) {
+      auto [cur, visited] = st.top();
+      st.pop();
+
+      if (visited) {
         ans.push_back(cur->val);
-        cur = cur->right;
+      } else {
+        st.push({cur, true});
+        st.push({cur->right, false});
+        st.push({cur->left, false});
       }
     }
+
     return ans;
   }
 };
@@ -44,7 +46,7 @@ int main() {
   root->left->right = new TreeNode(5);
   Solution s;
 
-  for (auto x : s.inorderTraversal(root)) {
+  for (auto x : s.postorderTraversal(root)) {
     std::cout << x << " ";
   }
   std::cout << std::endl;
